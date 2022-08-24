@@ -1,1 +1,4 @@
 venv/
+beautyBTC/beautyBC/__pycache__/
+beautyBTC/beautyBC/migrations/__pycache__/
+beautyBTC/beautyBTC/__pycache__/
