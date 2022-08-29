@@ -1,5 +1,5 @@
 """
-WSGI config for beautyBTC project.
+WSGI config for Beauty_Business project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'beautyBTC.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Beauty_Business.settings')
 
 application = get_wsgi_application()

@@ -3,6 +3,7 @@
 -- cat create_db_bb.sql|sudo -u postgres psql
 --DROP DATABASE bb_products;
 --CREATE DATABASE IF NOT EXISTS bb_products;
+DROP DATABASE "bb_products";
 SELECT 'CREATE DATABASE bb_products'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'bb_products')\gexec
 \l
@@ -72,13 +73,14 @@ CREATE TABLE IF NOT EXISTS stock (
 CREATE TABLE IF NOT EXISTS sales (
     sale_id SERIAL NOT NULL,
     sale_date DATE NOT NULL,
-    stock_ref INT NOT NULL,
+    stock_id INT NOT NULL,
+    product_id INT NOT NULL,
     amount INT NOT NULL,
-    FOREIGN KEY (stock_ref) REFERENCES stock (stock_id),
+    FOREIGN KEY (stock_id) REFERENCES stock (stock_id),
+    FOREIGN KEY (product_id) REFERENCES products (product_id),
     PRIMARY KEY (sale_id),
     CHECK (sale_id>=0),
-    CHECK (stock_ref>=0)
-
+    CHECK (stock_id>=0)
 );
 
 \l DATABASES;
