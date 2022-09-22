@@ -1,14 +1,11 @@
 -- script that fills the database
--- cat create_data.sql | mysql -uroot -p
--- cat create_db_bb.sql|sudo -u postgres psql
---DROP DATABASE bb_products;
---CREATE DATABASE IF NOT EXISTS bb_products;
+-- cat create_db_bb.sql | sudo -u postgres psql
+
 DROP DATABASE "bb_products";
 SELECT 'CREATE DATABASE bb_products'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'bb_products')\gexec
 \l
 \c bb_products
---SELECT DATABASE bb_products;
 
 CREATE TABLE IF NOT EXISTS category (
     category_id SERIAL PRIMARY KEY,

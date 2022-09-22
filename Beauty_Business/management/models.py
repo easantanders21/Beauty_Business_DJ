@@ -36,8 +36,8 @@ class Products(models.Model):
         managed = True
         db_table = 'products'
 
-    def __str__(self):
-        return "El nombre del producto es: {}".format(self.name_product)
+    #def __str__(self):
+    #    return "El nombre del producto es: {}".format(self.name_product)
 
         
 class Providers(models.Model):
@@ -87,7 +87,7 @@ class Stock(models.Model):
 
 class Sales(models.Model):
     sale_id = models.AutoField(primary_key=True)
-    sale_date = models.DateField()
+    sale_date = models.DateField(auto_now_add=True)
     stock_id = models.ForeignKey(Stock, on_delete=models.CASCADE)
     product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
     amount = models.IntegerField()
