@@ -12,3 +12,7 @@ Total en la factura en stock
 agregar el nombre al diccionario
 
 dbdiagram.io
+
+
+products_available = (Stock.objects.values('product_id_id').annotate(total=Sum('amount'), price=Max('sales_price')).order_by())
+    print(Stock.objects.filter(amount__gt = 0).values('product_id_id').annotate(total=Sum('amount'), price=Max('sales_price')).order_by().query)

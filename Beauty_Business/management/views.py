@@ -6,20 +6,21 @@ from django.db import connection
 
 from .models import Stock, Category, Products, Sales
 
-cursor = connection.cursor()
 
 def index(request):
-    products_available = (Stock.objects.values('product_id_id').annotate(total=Sum('amount'), price=Max('sales_price')).order_by())
-    print(Stock.objects.filter(amount__gt = 0).values('product_id_id').annotate(total=Sum('amount'), price=Max('sales_price')).order_by().query)
     products_available = Stock.objects.raw(
-        '''SELECT 1 AS stock_id, s.product_id_id, sum(s.amount) AS total, MAX(s.sales_price) AS price, p.name_product AS nombre FROM stock AS s INNER JOIN products AS p ON s.product_id_id = p.product_id WHERE s.amount > 0 GROUP BY s.product_id_id, p.name_product ORDER BY s.product_id_id'''
+        '''SELECT 1 AS stock_id, s.product_id_id,
+            sum(s.amount) AS total,
+            MAX(s.sales_price) AS price,
+            p.name_product AS nombre 
+        FROM stock AS s 
+        INNER JOIN products AS p ON s.product_id_id = p.product_id 
+        WHERE s.amount > 0 
+        GROUP BY s.product_id_id, p.name_product ORDER BY s.product_id_id'''
     )
-    query = Products.objects.raw('SELECT * FROM products')
     latest_Products = Products.objects.all()
-    print("---------------------")
-    print(latest_Products)
     return render(request, "management/index.html", {
-        "latest_Products": query,
+        "latest_Products": latest_Products,
         "products_available": products_available
     })
 
@@ -27,10 +28,11 @@ def sales_record(request):
     """ primero verificamos si es un metodo post """
     print(request)
     if request.method == "POST":
-        """ obtenemos el id del producto vendido y la cantidad casteados como enteros """
+        """ obtenemos el id del producto vendido, la cantidad casteados como enteros y el precio """
         try:
             sold_product_id = int(request.POST.get("product_sale"))
             amount = int(request.POST.get("amount"))
+            price = int(request.POST.get("price"))
         except ValueError:
             print("Value Error")
             response = redirect('/management/')
@@ -42,8 +44,11 @@ def sales_record(request):
     """ ahora buscamos el producto en el inventario 'stock' para descontar los vendido """
     product_in_stock = Stock.objects.filter(product_id_id = sold_product_id, amount__gt = 0).values()
     """ si encontramos existencias hacemos el descuento """
+
     if len(product_in_stock) == 0:
-        print("El diccionario esta vacio")
+        print("No hay unidades disponibles de ese producto")
+        response = redirect('/management/')
+        return response
     else:
         """ ojo que tenemos es un diccionario entonces tenemos que traer la row (instancia) para descontar
         ojo primero necesitamos el id en stock para eso """
@@ -65,7 +70,7 @@ def sales_record(request):
 
     """ tambien es importante traernos el objeto producto para registrar la venta """
     sold_product = get_object_or_404(Products, pk = sold_product_id)
-    
+
     """ por ultimo registramos la venta """
     """ por ahora vamos a crear el ultimo registro recuperando el ultimo pk """
     last_sale = Sales.objects.all().last()
@@ -75,11 +80,8 @@ def sales_record(request):
     sale.save()
     print("venta finalizada con exito: {}".format(sale))
     
-    
     latest_Products = Products.objects.all()
     return render(request, "management/index.html", {
         "latest_Products": latest_Products,
         "Bandera": "true"
     })
-    # response = redirect('/management/')
-    # return response

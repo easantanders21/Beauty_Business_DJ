@@ -4,19 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Beauty Business</title>
     {% load static %}
     <link rel="stylesheet" href= "{% static 'management/styles.css' %}">
-    <script type="text/javascript">
-        function ShowSelected()
-        {
-            /* Para obtener el valor */
-            var cod = document.getElementById("product_list").value;
-            /*alert(cod);*/
-
-            document.getElementById('id_producto').innerHTML=(cod)
-        }
-    </script>
 </head>
 <body>
     <h1>Panel de Ventas</h1>
@@ -36,13 +26,19 @@
                 <label for="product_list">Productos: </label>
                 <select name="product_sale" id="product_list" onchange="ShowSelected()">
                     {% for Product  in latest_Products %}
-                    <option value="{{ Product }}"> {{ Product.product_id }}   : {{ Product.name_product }}</option>
+                    <option value="{{ Product.product_id }}"> {{ Product.product_id }}   : {{ Product.name_product }}</option>
                     {% endfor %}
                 </select></li>
             <li>
                 <label for="">Cantidad: </label>
                 <input type="number" name="amount" min="1" required>
             </li>
+            <li>
+                <label for="">Precio: </label>
+                <input type="number" name="price" min="1" required>
+            </li>
+        </ul>
+        <ul id="price_input">
             <li>
                 <button type="submit">Registrar Venta</button>
             </li>

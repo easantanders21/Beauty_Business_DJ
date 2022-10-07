@@ -43,7 +43,7 @@ h1 {
 #sales_form {
     /* Centrar el formulario en la página */
     margin: 50px auto;
-    width: 700px;
+    width: 790px;
     /* Esquema del formulario */
     padding: 30px;
     border: 1px solid #CCC;
@@ -76,6 +76,12 @@ input {
     padding: 10px;
     border-radius: 10px;
     margin-left: 15px;
+}
+
+#price_input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* table style */
