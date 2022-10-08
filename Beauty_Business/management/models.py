@@ -74,6 +74,7 @@ class Stock(models.Model):
     product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
     purchase_price = models.IntegerField()
     sales_price = models.IntegerField()
+    total = models.IntegerField()
     amount = models.IntegerField()
     sales_st = models.IntegerField(blank=True, null=True)
 
@@ -91,6 +92,7 @@ class Sales(models.Model):
     stock_id = models.ForeignKey(Stock, on_delete=models.CASCADE)
     product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
     amount = models.IntegerField()
+    price = models.IntegerField()
 
     class Meta:
         managed = True

@@ -76,12 +76,19 @@ def sales_record(request):
     last_sale = Sales.objects.all().last()
     last_sale_id = last_sale.sale_id + 1
     print("este es el nuevo registro {}".format(last_sale_id))
-    sale = Sales(sale_id = last_sale_id, stock_id = stock_discharge, product_id = sold_product, amount = amount)
+    sale = Sales(sale_id = last_sale_id, stock_id = stock_discharge, product_id = sold_product, amount = amount, price = price)
     sale.save()
     print("venta finalizada con exito: {}".format(sale))
     
-    latest_Products = Products.objects.all()
-    return render(request, "management/index.html", {
-        "latest_Products": latest_Products,
-        "Bandera": "true"
+    response = redirect('/management/confirmation')
+    return response
+
+#    latest_Products = Products.objects.all()
+#    return render(request, "management/index.html", {
+#        "latest_Products": latest_Products,
+#        "Bandera": "true"
+#    })
+
+def confirmation(request):
+    return render(request, "management/confirmation.html", {
     })
