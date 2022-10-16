@@ -3,13 +3,10 @@ Beauty_Business_DJ
 
 Tareas:
 
-Limitar las ventas a la cantidad de producto disponible
-todo por id
-agregarlo al formulario para ver la limitante de cantidad de producto
-
-Agregar a la base de datos precio de venta en sales.
-Total en la factura en stock
-agregar el nombre al diccionario
+* agregar la venta al recorrido de los stocks OK
+* terminar manejo de errores en el html y jinja
+* agregar nro de factura
+* limitar precios de ventas
 
 dbdiagram.io
 

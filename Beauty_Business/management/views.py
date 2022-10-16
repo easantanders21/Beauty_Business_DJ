@@ -40,55 +40,63 @@ def sales_record(request):
     else:
         response = redirect('/management/')
         return response
-
-    """ ahora buscamos el producto en el inventario 'stock' para descontar los vendido """
-    product_in_stock = Stock.objects.filter(product_id_id = sold_product_id, amount__gt = 0).values()
-    """ si encontramos existencias hacemos el descuento """
-
-    if len(product_in_stock) == 0:
-        print("No hay unidades disponibles de ese producto")
-        response = redirect('/management/')
-        return response
-    else:
-        """ ojo que tenemos es un diccionario entonces tenemos que traer la row (instancia) para descontar
-        ojo primero necesitamos el id en stock para eso """
-        stock_id = product_in_stock[0]["stock_id"]
-        stock_discharge = get_object_or_404(Stock, pk = stock_id)
-        print("id stock: {} -- id producto: {} -- cantidad disp {} ".format(stock_id, sold_product_id, stock_discharge.amount))
-        if amount <= stock_discharge.amount:
-            stock_discharge.amount -= amount
-            stock_discharge.sales_st += amount
-            try:
-                stock_discharge.save()
-                print("se realizo la desgarga exitosamente")
-            except:
-                print("no se pudo hacer la descarga")
-        else: 
-            print("no hay suficiente producto para realizar la venta")
-            response = redirect('/management/')
-            return response
-
-    """ tambien es importante traernos el objeto producto para registrar la venta """
-    sold_product = get_object_or_404(Products, pk = sold_product_id)
-
-    """ por ultimo registramos la venta """
-    """ por ahora vamos a crear el ultimo registro recuperando el ultimo pk """
-    last_sale = Sales.objects.all().last()
-    last_sale_id = last_sale.sale_id + 1
-    print("este es el nuevo registro {}".format(last_sale_id))
-    sale = Sales(sale_id = last_sale_id, stock_id = stock_discharge, product_id = sold_product, amount = amount, price = price)
-    sale.save()
-    print("venta finalizada con exito: {}".format(sale))
     
+    """ Vamos a validar si hay unidades suficientes para efectuar la venta """
+    sales_units = Stock.objects.filter(product_id_id = sold_product_id, amount__gt = 0).aggregate(total = Sum('amount'))
+
+
+    if sales_units['total'] == None:
+        return render(request, "management/error_handling.html", {
+            "error": "No hay existencias en stock",
+        })
+    elif sales_units['total'] < amount:
+        return render(request, "management/error_handling.html", {
+            "error": "No existen suficientes unidades para realizar la venta",
+        })
+
+    """ ahora buscamos los lotes de producto en el inventario 'stock' para descontar los vendido """
+    product_in_stock = Stock.objects.filter(product_id_id = sold_product_id, amount__gt = 0).values()
+
+    if product_in_stock:
+        for i in product_in_stock:
+            if amount > 0:
+                stock_id = i['stock_id']
+                stock_discharge = get_object_or_404(Stock, pk = stock_id)
+                if amount >= i['amount']:
+                    stock_discharge.deduct_in_stock(i['amount'])
+                    last_sale = Sales.objects.all().last()
+                    last_sale_id = last_sale.sale_id + 1
+                    sold_product = get_object_or_404(Products, pk = sold_product_id)
+                    sale = Sales(sale_id = last_sale_id, stock_id = stock_discharge, product_id = sold_product, amount = i['amount'], price = price)
+                    sale.save()
+                    amount -= i['amount']
+                elif amount < i['amount']:
+                    stock_discharge.deduct_in_stock(amount)
+                    last_sale = Sales.objects.all().last()
+                    last_sale_id = last_sale.sale_id + 1
+                    sold_product = get_object_or_404(Products, pk = sold_product_id)
+                    sale = Sales(sale_id = last_sale_id, stock_id = stock_discharge, product_id = sold_product, amount = amount, price = price)
+                    sale.save()
+                    amount -= amount
+                elif amount == 0:
+                    break                    
+        response = redirect('/management/confirmation')
+        return response
+
     response = redirect('/management/confirmation')
     return response
 
-#    latest_Products = Products.objects.all()
-#    return render(request, "management/index.html", {
-#        "latest_Products": latest_Products,
-#        "Bandera": "true"
-#    })
+
+def purchases(request):
+    return render(request, "management/purchases.html", {
+    })
+
 
 def confirmation(request):
     return render(request, "management/confirmation.html", {
+    })
+
+    
+def error_handling(request):
+    return render(request, "management/error_handling.html", {
     })

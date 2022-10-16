@@ -11,7 +11,7 @@ class Category(models.Model):
         db_table = 'category'
 
     def __str__(self):
-        return "El nombre de la categoria es: {}".format(self.name_category)
+        return "Categoria: {}".format(self.name_category)
 
 
 class Mark(models.Model):
@@ -23,7 +23,7 @@ class Mark(models.Model):
         db_table = 'mark'
     
     def __str__(self):
-        return "El nombre de la marcaes: {}".format(self.name_mark)
+        return "Marca: {}".format(self.name_mark)
 
 
 class Products(models.Model):
@@ -36,8 +36,8 @@ class Products(models.Model):
         managed = True
         db_table = 'products'
 
-    #def __str__(self):
-    #    return "El nombre del producto es: {}".format(self.name_product)
+    def __str__(self):
+        return "{} - {}".format(self.product_id, self.name_product)
 
         
 class Providers(models.Model):
@@ -51,7 +51,7 @@ class Providers(models.Model):
         db_table = 'providers'
 
     def __str__(self):
-        return "El nombre del proveedor es: {}".format(self.provider_name)
+        return "Proveedor: {}".format(self.provider_name)
 
 
 class Purchases(models.Model):
@@ -65,7 +65,7 @@ class Purchases(models.Model):
         db_table = 'purchases'
 
     def __str__(self):
-        return "El id de la compra es: {}".format(self.purchase_id)
+        return "{}".format(self.purchase_id)
 
 
 class Stock(models.Model):
@@ -85,6 +85,11 @@ class Stock(models.Model):
     def __str__(self):
         return "El id del stock es: {}".format(self.stock_id)
 
+    def deduct_in_stock(self, amount_discharge):
+        self.amount -= amount_discharge
+        self.sales_st += amount_discharge
+        self.save()
+
 
 class Sales(models.Model):
     sale_id = models.AutoField(primary_key=True)
@@ -99,4 +104,4 @@ class Sales(models.Model):
         db_table = 'sales'
 
     def __str__(self):
-        return "el id de la venta es: {}".format(self.sale_id)
+        return "ID de la venta: {}".format(self.sale_id)
