@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.db.models import Count, Sum, Max
 from django.db import connection
 
-from .models import Stock, Category, Products, Sales
+from .models import Stock, Category, Products, Sales, Mark, Providers
 
 
 def index(request):
@@ -26,7 +26,6 @@ def index(request):
 
 def sales_record(request):
     """ primero verificamos si es un metodo post """
-    print(request)
     if request.method == "POST":
         """ obtenemos el id del producto vendido, la cantidad casteados como enteros y el precio """
         try:
@@ -40,7 +39,7 @@ def sales_record(request):
     else:
         response = redirect('/management/')
         return response
-    
+
     """ Vamos a validar si hay unidades suficientes para efectuar la venta """
     sales_units = Stock.objects.filter(product_id_id = sold_product_id, amount__gt = 0).aggregate(total = Sum('amount'))
 
@@ -92,11 +91,86 @@ def purchases(request):
     })
 
 
+def mark_register(request):
+    if request.method == "POST":
+        """ obtenemos el id del producto vendido, la cantidad casteados como enteros y el precio """
+        try:
+            mark_name = request.POST.get("new_mark")
+        except ValueError:
+            print("Value Error")
+    else:
+        return render(request, "management/error_handling.html", {
+        })
+
+    last_mark = Mark.objects.all().last()
+    last_mark_id = last_mark.mark_id + 1
+    new_mark = Mark(mark_id = last_mark_id, name_mark = mark_name)
+    new_mark.save()
+    
+    if isinstance(new_mark, Mark):
+        response = redirect('/management/confirmation')
+        return response
+    else:
+        return render(request, "management/error_handling.html", {
+    })
+
+
+def category_register(request):
+    if request.method == "POST":
+        """ obtenemos el id del producto vendido, la cantidad casteados como enteros y el precio """
+        try:
+            category_name = request.POST.get("new_category")
+        except ValueError:
+            print("Value Error")
+    else:
+        return render(request, "management/error_handling.html", {
+        })
+
+    last_category = Category.objects.all().last()
+    last_category_id = last_category.category_id + 1
+    new_category = Category(category_id = last_category_id, name_category = category_name)
+    print(new_category.name_category)
+    new_category.save()
+    
+    if isinstance(new_category, Category):
+        response = redirect('/management/confirmation')
+        return response
+    else:
+        return render(request, "management/error_handling.html", {
+    })
+
+
+def provider_register(request):
+    if request.method == "POST":
+        """ obtenemos el id del producto vendido, la cantidad casteados como enteros y el precio """
+        try:
+            provider_name = request.POST.get("name_provider")
+            phone = request.POST.get("phone")
+            addres = request.POST.get("addres")
+        except ValueError:
+            print("Value Error")
+    else:
+        return render(request, "management/error_handling.html", {
+        })
+
+    last_provider = Providers.objects.all().last()
+    last_provider_id = last_provider.provider_id + 1
+    new_provider = Providers(provider_id = last_provider_id, provider_name = provider_name, phone = phone, provider_address = addres)
+    new_provider.save()
+    
+    if isinstance(new_provider, Providers):
+        response = redirect('/management/confirmation')
+        return response
+    else:
+        return render(request, "management/error_handling.html", {
+    })
+
+
 def confirmation(request):
     return render(request, "management/confirmation.html", {
     })
 
-    
+
 def error_handling(request):
     return render(request, "management/error_handling.html", {
     })

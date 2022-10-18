@@ -4,10 +4,56 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Beauty Business</title>
+    {% load static %}
+    <link rel="stylesheet" href= "{% static 'management/styles.css' %}">
 </head>
 <body>
-    <h1>Seccion de compras</h1>
-    <div style="text-align: center"><a href="http://127.0.0.1:8000/management/"> Retornar al index</a></div>
+    <h1>Panel de Compras</h1>
+    <nav id="navegador">
+        <ul>
+            <li><a href="http://127.0.0.1:8000/management/">Registro de Ventas</a></li>
+            <li><a href="http://127.0.0.1:8000/management/purchases/">Registro de Compras</a></li>
+            <li><a href="estadisticas.html">Estadísticas</a></li>
+            <li><a href="inventario.html">Inventario</a></li>
+        </ul>
+    </nav>
+    
+    <div id="register">
+        <div id="mark_register">
+            <h3>Registrar Marca</h3>
+            <form action="http://127.0.0.1:8000/management/mark_register/" method="post" id="form_register">
+                {% csrf_token%}
+                <label for="">Nombre de la marca</label>
+                <input type="text" name="new_mark" maxlength="30" required>
+                <button type="submit">Registrar Marca</button>
+            </form>
+        </div>
+
+        <div id="mark_register">
+            <h3>Registrar Categoria</h3>
+            <form action="http://127.0.0.1:8000/management/category_register/" method="post" id="form_register">
+                {% csrf_token%}
+                <label for="">Nombre Categoria</label>
+                <input type="text" name="new_category" maxlength="30" required>
+                <button type="submit">Registrar Categoria</button>
+            </form>
+        </div>
+
+        <div id="mark_register">
+            <h3>Registrar Proveedor</h3>
+            <form action="http://127.0.0.1:8000/management/provider_register/" method="post" id="form_register">
+                {% csrf_token%}
+                <label for="">Nombre Proveedor</label>
+                <input type="text" name="name_provider" maxlength="30" required>
+                <label for="">Telefono</label>
+                <input type="text" name="phone" maxlength="30" required>
+                <label for="">Direccion</label>
+                <input type="text" name="addres" maxlength="30" required>
+                <button type="submit">Registrar Proveedor</button>
+            </form>
+        </div>
+    </div>
+    
 </body>
 </html>

@@ -106,3 +106,35 @@ td {
     border: 1px solid black;
     border-radius: 10px;
 }
+
+/* Purchases section */
+#register {
+    display: flex;
+    justify-content: center;
+}
+
+#mark_register {
+    border: solid 1px black;
+    border-radius: 10px;
+    margin: auto;
+    width: 200px;
+    padding: 5px;
+}
+
+#mark_register h3 {
+    background-color: #64f5ad;
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px;
+}
+
+#form_register {
+    text-align: center;
+}
+
+#form_register button, input {
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
