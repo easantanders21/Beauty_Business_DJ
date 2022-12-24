@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.db.models import Count, Sum, Max
 from django.db import connection
 
-from .models import Stock, Category, Products, Sales, Mark, Providers
+from .models import Stock, Category, Products, Sales, Mark, Providers, Purchases
 
 
 def index(request):
@@ -87,7 +87,15 @@ def sales_record(request):
 
 
 def purchases(request):
+    all_marks = Mark.objects.all()
+    all_categories = Category.objects.all()
+    all_purchases = Purchases.objects.all()
+    all_products = Products.objects.all()
     return render(request, "management/purchases.html", {
+        "all_marks": all_marks,
+        "all_categories": all_categories,
+        "all_purchases": all_purchases,
+        "all_products": all_products
     })
 
 
@@ -155,7 +163,10 @@ def provider_register(request):
 
     last_provider = Providers.objects.all().last()
     last_provider_id = last_provider.provider_id + 1
-    new_provider = Providers(provider_id = last_provider_id, provider_name = provider_name, phone = phone, provider_address = addres)
+    new_provider = Providers(provider_id = last_provider_id,
+                             provider_name = provider_name,
+                             phone = phone,
+                             provider_address = addres)
     new_provider.save()
     
     if isinstance(new_provider, Providers):
@@ -165,6 +176,70 @@ def provider_register(request):
         return render(request, "management/error_handling.html", {
     })
 
+
+def product_register(request):
+    if request.method == "POST":
+        """  """
+        try:
+            product_name = request.POST.get("name_product")
+            mark = request.POST.get("mark")
+            category = request.POST.get("category")
+        except ValueError:
+            print("Value Error")
+    else:
+        return render(request, "management/error_handling.html", {
+        })
+    last_product = Products.objects.all().last()
+    last_product_id = last_product.product_id + 1
+    mark_obj = get_object_or_404(Mark, pk = mark)
+    category_obj = get_object_or_404(Category, pk = category)
+    new_product = Products(product_id = last_product_id,
+                           name_product = product_name,
+                           category_id = category_obj,
+                           mark_id = mark_obj)
+    new_product.save()
+    
+    if isinstance(new_product, Products):
+        response = redirect('/management/confirmation')
+        return response
+    else:
+        return render(request, "management/error_handling.html", {
+    })
+        
+def stock_register(request):
+    if request.method == "POST":
+        """  """
+        try:
+            purchase = request.POST.get("factura")
+            product = request.POST.get("product")
+            purchase_price = int(request.POST.get("purchase_price"))
+            sales_price = int(request.POST.get("sales_price"))
+            amount = int(request.POST.get("amount"))
+        except ValueError:
+            print("Value Error")
+    else:
+        return render(request, "management/error_handling.html", {
+        })
+    last_stock_register = Stock.objects.all().last()
+    last_stock_register_id = last_stock_register.stock_id + 1
+    purchase_obj = get_object_or_404(Purchases, pk = purchase)
+    product_obj = get_object_or_404(Products, pk = product)
+    new_stock_register = Stock(stock_id = last_stock_register_id,
+                           purchase_id = purchase_obj,
+                           product_id = product_obj,
+                           purchase_price = purchase_price,
+                           sales_price = sales_price,
+                           total = amount,
+                           amount = amount,
+                           sales_st = 0)
+    new_stock_register.save()
+    
+    if isinstance(new_stock_register, Stock):
+        response = redirect('/management/confirmation')
+        return response
+    else:
+        return render(request, "management/error_handling.html", {
+    })
 
 def confirmation(request):
     return render(request, "management/confirmation.html", {
